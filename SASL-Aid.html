@@ -7934,6 +7934,7 @@ label { font-size: 12px; color: var(--text-dim); }
       <select id="hsasl-campaign-select" style="background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:5px 10px;font-size:13px;font-family:inherit" onchange="setActiveCampaign(this.value)">
         <option value="">— None (use standard SASL tables) —</option>
         <option value="red-factories">Red Barricades (Stalingrad, Oct–Nov 1942)</option>
+        <option value="valor-of-the-guards">Valor of the Guards (Stalingrad, 1942–43)</option>
       </select>
     </div>
 
@@ -9639,6 +9640,7 @@ function saveState() {
     c0Result,
     _firedOnceREs,
     _unitType1222Lock,
+    activeCampaign: window._activeCampaign,
   };
   localStorage.setItem('sasl-aid-state', JSON.stringify(state));
   updateREDisplay();
@@ -9680,6 +9682,7 @@ function loadState() {
     if (s.c0Result !== undefined) c0Result = s.c0Result;
     if (s._firedOnceREs) _firedOnceREs = s._firedOnceREs;
     if (s._unitType1222Lock) _unitType1222Lock = s._unitType1222Lock;
+    if (s.activeCampaign) setActiveCampaign(s.activeCampaign, true);
     renderC0Banner();
     renderFriendlyAlliedMinorControls();
     renderAlliedMinorControls();
@@ -12310,6 +12313,141 @@ GEN_SW.us = GEN_SW['us-pto'] = GEN_SW.american;
 window._activeCampaign = null;
 
 const CAMPAIGN_DATA = {
+  'valor-of-the-guards': {
+    name: 'Valor of the Guards',
+    subtitle: 'Central Stalingrad — four VotG SASL missions and VotG Campaign Games I–IV',
+    drmNote: 'VotG §20 is active: its A1, A5, A9e, A11, G2–G5, G6a, G9, R2–R6, R9 and R10 tables supersede standard SASL.',
+    affects: ['german','russian'],
+    squadDRM: function() { return 0; },
+    tables: {
+      german: {
+        squad: [{max:2,r:'4-6-8'},{max:4,r:'8-3-8'},{max:6,r:'5-4-8'},{max:9,r:'4-6-7'},{max:11,r:'4-4-7'},{max:99,r:'4-3-6'}],
+        leader: [{max:2,r:'10-3'},{max:3,r:'10-2'},{max:4,r:'9-2'},{max:5,r:'9-1'},{max:7,r:'8-1'},{max:9,r:'8-0'},{max:10,r:'7-0'},{max:12,r:'—'},{max:99,r:'6+1'}],
+        sw: { data:{2:'HMG',3:'LMG',4:'HMG',5:'ATR',6:'MMG',7:'—',8:'LMG',9:'MTR',10:'LMG',11:'HMG',12:'MMG'}, footnotes:[
+          {marker:'1',text:'If squad is 8-3-8, SW is a DC.'},{marker:'2',text:'If squad is 8-3-8, SW is a FT.'},{marker:'3',text:'If squad is 5-4-8, SW is a DC.'},{marker:'4',text:'If squad is other than 8-3-8/5-4-8, change squad to a HS.'},{marker:'5',text:'Change squad to a 1-2-7 crew.'}
+        ]},
+        gun:{2:{inside:'75L AT',outside:'75L AT'},3:{inside:'75L AT',outside:'150 INF'},4:{inside:'50L AT',outside:'76L ART'},5:{inside:'75 INF',outside:'81 MTR'},6:{inside:'50L AT',outside:'50L AT'},7:{inside:'75 INF',outside:'75 INF'},8:{inside:'75 INF',outside:'37L AT'},9:{inside:'37L AT',outside:'75 INF'},10:{inside:'37L AT',outside:'81 MTR'},11:{inside:'75L AT',outside:'75L AT'},12:{inside:'37L AT',outside:'37L AT'}},
+        spg:[{max:6,r:'StuG IIIG'},{max:8,r:'StuG IIIB'},{max:99,r:'SdKfz 10/5'}]
+      },
+      russian: {
+        squad:[{max:4,r:'6-2-8'},{max:7,r:'4-5-8'},{max:9,r:'4-4-7 [1-5] / 5-2-7 [6]'},{max:99,r:'6-2-8 [1-2] / 4-2-6 [3-6]'}],
+        leader:[{max:1,r:'10-3'},{max:2,r:'10-2'},{max:3,r:'9-2'},{max:4,r:'9-1'},{max:5,r:'8-1'},{max:7,r:'8-0'},{max:8,r:'7-0'},{max:10,r:'—'},{max:99,r:'6+1'}],
+        sw:{data:{2:'MMG',3:'Mol-P',4:'LMG',5:'MMG',6:'LMG',7:'—',8:'MTR',9:'ATR',10:'HMG',11:'ATR',12:'HMG'},footnotes:[
+          {marker:'1',text:'If squad is 6-2-8, SW is a DC.'},{marker:'2',text:'If squad is 6-2-8, SW is a FT; if NKVD 6-2-8/4-2-6, SW is an ATR.'},{marker:'3',text:'Change squad to a HS.'},{marker:'4',text:'Change squad to a 1-2-7 crew (unless any squad type is 6-2-8 or 4-2-6).'},{marker:'5',text:'On subsequent dr 1–2 SW is a .50 cal HMG.'},{marker:'6',text:'If NKVD 6-2-8/4-2-6, SW is a MMG.'}
+        ]},
+        gun:{2:{inside:'45LL AT',outside:'76L ART'},3:{inside:'45LL AT',outside:'76L ART'},4:{inside:'45LL AT',outside:'45LL AT'},5:{inside:'45LL AT',outside:'82 MTR'},6:{inside:'45LL AT',outside:'82 MTR'},7:{inside:'45L AT',outside:'45L AT'},8:{inside:'45LL AT',outside:'45LL AT'},9:{inside:'45L AT',outside:'37L AA'},10:{inside:'76 INF',outside:'37L AA'},11:{inside:'76 INF',outside:'76 INF'},12:{inside:'76 INF',outside:'76 INF'}},
+        afv:{2:'KV-1 M42',3:'KV-1 M42',4:'KV-1 M42',5:'KV-1 M42',6:'T-34 M41',7:'T-34 M41',8:'T-34 M41',9:'T-70',10:'T-60 M42',11:'T-60 M42',12:'T-60 M42'}
+      }
+    },
+    a1:[
+      {dr:1,drLabel:'1',result:'AFV¹, S²',detail:'AFV + Squad (Rider if Russian ENEMY)'},{dr:2,drLabel:'2',result:'AFV¹',detail:'AFV only'},
+      {dr:3,drLabel:'3',result:'S, S, L, F⁵, SW',detail:'2 Squads + Leader + Fortification + SW'},{dr:4,drLabel:'4',result:'S, HS³, L, F⁵, SW',detail:'Squad + HS + Leader + Fortification + SW'},
+      {dr:5,drLabel:'5',result:'S, L, F⁵, SW',detail:'Squad + Leader + Fortification + SW'},{dr:6,drLabel:'6',result:'S, F⁵',detail:'Squad + Fortification'},
+      {dr:7,drLabel:'7',result:'—',detail:'Nothing'},{dr:8,drLabel:'8',result:'HS³',detail:'Half-Squad'},
+      {dr:9,drLabel:'9',result:'S',detail:'Squad'},{dr:10,drLabel:'10',result:'S, F⁵, SW',detail:'Squad + Fortification + SW'},
+      {dr:11,drLabel:'11',result:'S, S, L, F⁵, SW',detail:'2 Squads + Leader + Fortification + SW'},
+      {dr:12,drLabel:'12',result:'HS³, F⁵, Gun⁴',detail:'Half-Squad + Fortification + Gun'},
+      {dr:13,drLabel:'13',result:'SPG⁶',detail:'SPG (Russian: treat as AFV)'},{dr:14,drLabel:'14',result:'S, F⁵, Gun⁴',detail:'Squad + Fortification + Gun'}
+    ],
+    a1fn:{'¹':'SPG {G6a} if German ENEMY; see 5.61 in a Prohibited Location.','²':'Squad is a Rider if Russian ENEMY; determine final vehicle type per D6.2.','³':'Squad if ENEMY nationality may not Deploy.','⁴':'See 5.761 in a building; see 5.61 in a Prohibited Location.','⁵':'In ENEMY MPh with Advance Attitude, F becomes automatic same-hex SMOKE placement; otherwise see 5.74.','⁶':'Treat as AFV {R6}, dug-in if possible, if Russian ENEMY.'},
+    a5:[{max:0,r:'x+5+7 Pillbox / Obstacle / both (subsequent dr)'},{max:1,r:'Obstacle [1-3] / Entrenchment [4-6]'},{max:2,r:'Obstacle'},{max:4,r:'Entrenchment'},{max:99,r:'None'}],
+    age:[{max:2,r:'Each level [EXC: sewer]'},{max:3,r:'none'},{max:4,r:'Ground & Second level'},{max:5,r:'Ground & First level'},{max:6,r:'First level'},{max:7,r:'Ground level'},{max:8,r:'Cellar & Second level'},{max:9,r:'Each level [EXC: sewer]'},{max:10,r:'Cellar & First level'},{max:11,r:'none'},{max:99,r:'Roof'}],
+    ageFn:['1. Include Cellar and Roof, if applicable.','2. In a Factory, change any level other than Ground to Roof.'],
+    oba:{2:{german:'150+',russian:'150+'},3:{german:'150+R',russian:'200+R'},4:{german:'150+',russian:'150+'},5:{german:'80+M*',russian:'80+M*'},6:{german:'100+*',russian:'120+'},7:{german:'80+M*',russian:'80+M*'},8:{german:'80+M*',russian:'70+'},9:{german:'100+*',russian:'70+'},10:{german:'150+',russian:'120+'},11:{german:'150+',russian:'150+'},12:{german:'150+R',russian:'200+R'}},
+    r10:{units:{0:'4-5-8 ×2, L {R3}',1:'4-5-8, 6-2-8, SW',2:'4-5-8, 4-4-7, SW',3:'6-2-8, 4-4-7, L {R3}',4:'4-4-7, 5-2-7, SW',5:'6-2-8, 4-2-6, L {R3}',6:'5-2-7, 4-2-6',7:'4-2-6 ×2'},sw:{1:'FT [1] / DC [2-6]',2:'LMG [1-4] / ATR [5-6]',3:'LMG [1-4] / ATR [5-6]',4:'LMG [1-4] / ATR [5-6]',5:'—',6:'—'}},
+    reLabel:'VotG A11 ENEMY Random Event',
+    reEvents:[
+      {min:11,max:11,title:'Sewer Infiltration!',text:'Place S? in eligible Manhole Locations within 3 hexes of a random FBE hex; add S? in adjacent VPO Locations and use Advance Attitude.'},
+      {min:12,max:12,title:'ENEMY leader Battle Hardens!',text:'The best eligible ENEMY leader Battle Hardens; broken units in its Location automatically rally.'},
+      {min:13,max:13,title:'Anti-Tank Obstacle!',text:'Place an A-T Ditch or Roadblock toward the EBE; generated units in an A-T Ditch are placed in it.'},
+      {min:14,max:15,title:'ENEMY artillery strike!',text:'Resolve an Artillery Strike against FRIENDLY units per 8.7; determine strength/type on the VotG OBA chart.'},
+      {min:16,max:16,title:'ENEMY resistance stiffens!',text:'Increase ENEMY AC# by one; reroll if already 5.'},
+      {min:21,max:21,title:'Hidden pillbox opens fire!',text:'Generate an x+5+7 pillbox and determine occupants on A1; place by random distance toward the EBE.'},
+      {min:22,max:22,title:'One FRIENDLY AFV immobilized',text:'Randomly immobilize one mobile FRIENDLY AFV; reroll if none.'},
+      {min:23,max:23,title:'ENEMY Armor!',text:'Generate a number of same-type AFV and an Armor Leader using the VotG nationality tables.'},
+      {min:24,max:25,title:'Storm Group/Stosstrupp attack!',text:'Activate an Elite ENEMY squad and SW; Russian result is a 6-2-8, German type is determined by subsequent dr.'},
+      {min:26,max:31,title:'Ambush!',text:'Activate an ENEMY squad in concealed terrain closest to the EBE and immediately conduct Hand-to-Hand CC.'},
+      {min:32,max:33,title:'Berserk!',text:'The closest eligible Activated ENEMY Infantry unit goes Berserk; nearby eligible units take a NTC and may join.'},
+      {min:34,max:35,title:'Local Counterattack!',text:'Check the closest S? and all S? within three hexes for Activation; units activate in Advance Attitude.'},
+      {min:36,max:41,title:'ENEMY reinforcements!',text:'DR+2 S? enter along the EBE in Advance Attitude; subsequent reinforcement checks may add more.'},
+      {min:42,max:42,title:'FRIENDLY ammunition shortages',text:'All FRIENDLY MMC and Weapons suffer Ammunition Shortage for the remainder of the Mission/CG scenario.'},
+      {min:43,max:43,title:'ENEMY HMG opens up!',text:'Activate the nearest eligible S? as a squad, HMG and leader in Prevailing Attitude.'},
+      {min:44,max:45,title:'Local Counterattack!',text:'Check the closest S? and all S? within two hexes; Russian groups of 3+ adjacent S? may activate as a Human Wave.'},
+      {min:46,max:51,title:'ENEMY reinforcements!',text:'DR+3 S? enter along the EBE in Advance Attitude; subsequent reinforcement checks may add more.'},
+      {min:52,max:52,title:'FRIENDLY intelligence report',text:'Reduce FRIENDLY RE numbers by one; apply the special 2/3 handling in the table.'},
+      {min:53,max:53,title:'Hidden Gun opens fire!',text:'Generate a nationality Gun and place it concealed in the nearest eligible Location with LOS to the selected target.'},
+      {min:54,max:54,title:'Winner of the Iron Cross/Hero of the Soviet Union!',text:'Activate an ENEMY Hero instead of the squad in RE 24–25.'},
+      {min:55,max:55,title:'Fanatic Strongpoint!',text:'Fortify all ground-level Locations of the selected VPO building and activate each S? there in Hold Attitude.'},
+      {min:56,max:56,title:'FRIENDLY AFV Recalled',text:'Randomly Recall one mobile FRIENDLY AFV; reroll if none.'},
+      {min:61,max:61,title:'ENEMY machinegun nest opens up!',text:'Resolve RE 43, also receiving a MMG and a second ENEMY MMC of the same type.'},
+      {min:62,max:63,title:'ENEMY artillery strike!',text:'Resolve an Artillery Strike per 8.7 using the VotG OBA chart.'},
+      {min:64,max:64,title:'Command Confusion!',text:'All FRIENDLY Command DR receive +1 for the remainder of the Mission/CG scenario.'},
+      {min:65,max:65,title:'Minefield!',text:'Resolve a mine attack against the nearest eligible FRIENDLY stack/AFV and mark the Location with the determined minefield.'},
+      {min:66,max:66,title:'HIP Set DC!',text:'Detonate a Set DC in the nearest eligible FRIENDLY building stack Location at the start of the upcoming ENEMY PFPh.'}
+    ],
+    friendlyREEvents:[
+      {min:1,max:2,title:'Pioneer/Storm Group platoon arrives!',text:'A Pioneer platoon (German) or Storm Group platoon (Russian) arrives; determine strength, SW and leader per V12.622–12.6225.'},
+      {min:3,max:3,title:'Pioneer/Storm Group flank attack!',text:'Resolve 01–02, but the units enter along a randomly selected north or south edge.'},
+      {min:4,max:4,title:'Fortification Generation improves',text:'Each ENEMY dr on A5 receives +1 for the remainder of the Mission/CG scenario.'},
+      {min:5,max:6,title:'Tommy-gunners attack!',text:'A Stosstrupp platoon (German) or Guards SMG platoon (Russian) arrives.'},
+      {min:11,max:11,title:'Stukas/Sturmoviks!',text:'Aircraft arrive during the next ENEMY MPh; determine number by dr and reroll if air support is prohibited.'},
+      {min:12,max:12,title:'Recon Section reports!',text:'Make a Recon dr per V12.624, treating the FRIENDLY side as having spent 2 CPP.'},
+      {min:13,max:13,title:'MG Section!',text:'Two 1-2-7 crews arrive with one HMG and one MMG (Russian HMG may become .50 cal).'},
+      {min:14,max:14,title:'Local intelligence',text:'Reveal information, then remove a DR number of eligible S? in LOS; preserve VPO S? when possible.'},
+      {min:15,max:15,title:'ENEMY resistance fades',text:'Remove a DR number of eligible S?; preserve VPO S? when possible.'},
+      {min:16,max:16,title:'SPG/Tank platoon arrives!',text:'Determine number, type and Armor Leader using the VotG nationality tables.'},
+      {min:21,max:22,title:'Berserk!',text:'The closest eligible FRIENDLY Infantry unit goes Berserk and nearby eligible units take a NTC.'},
+      {min:23,max:23,title:'SPG/Tank section arrives!',text:'Determine number, type and Armor Leader; all vehicles are the same type.'},
+      {min:24,max:24,title:'ENEMY ammunition supplies dwindling!',text:'All ENEMY MMC and Weapons suffer Ammunition Shortage for the remainder of the Mission/CG scenario.'},
+      {min:25,max:25,title:'Gun section arrives!',text:'Determine number and nationality Gun type using the Outside column; all Guns are the same type and crewed by 2-2-8s.'},
+      {min:26,max:26,title:'SPG/Tank platoon flank attack!',text:'Resolve RE16; on subsequent dr ≤4 the platoon enters along the north or south edge.'},
+      {min:31,max:33,title:'Artillery support granted!',text:'Determine OBA type on the VotG OBA chart and ammunition supply; provide a radio/field phone or qualifying leader.'},
+      {min:34,max:36,title:'Infantry reinforcements!',text:'Determine number and same squad type; determine leader and SW on VotG nationality tables.'},
+      {min:41,max:41,title:'ENEMY AFV Recalled!',text:'Randomly Recall one mobile ENEMY AFV; reroll if none.'},
+      {min:42,max:42,title:'ENEMY AFV immobilized!',text:'Randomly immobilize one mobile ENEMY AFV; reroll if none.'},
+      {min:43,max:43,title:'ENEMY resistance slackens!',text:'Decrease ENEMY AC# by one; if already 2 resolve FRIENDLY RE15 instead.'},
+      {min:44,max:44,title:'Adjust ENEMY RE numbers',text:'Make a subsequent dr and decrease or increase ENEMY RE numbers per the VotG table.'},
+      {min:45,max:45,title:'FRIENDLY leader turns Heroic!',text:'Randomly select an eligible FRIENDLY non-Armor leader to become Heroic.'},
+      {min:46,max:46,title:'FRIENDLY sniper finds a target!',text:'Conduct a type 1 or type 2 sniper attack according to a subsequent dr.'},
+      {min:51,max:51,title:'FRIENDLY Infantry flank attack!',text:'Generate squads, leader and SW using the VotG nationality tables; enter north or south.'},
+      {min:52,max:52,title:'SPGs/Tanks stage a flank attack!',text:'Generate vehicles and Armor Leader; enter along a randomly selected north or south edge.'},
+      {min:53,max:53,title:'Combined arms flank attack!',text:'Resolve the infantry and vehicle flank-attack events together, entering along the same edge.'},
+      {min:54,max:54,title:'Medium mortar section arrives!',text:'Determine number of 81mm/82mm mortars; each receives a 2-2-8 crew.'},
+      {min:55,max:55,title:'FRIENDLY airstrike!',text:'Stukas or fighter-bombers arrive during the next ENEMY MPh; determine number by dr.'},
+      {min:56,max:56,title:'AT Gun section arrives!',text:'Determine number and nationality Gun type using the Inside column; all Guns are crewed by 2-2-8s.'},
+      {min:61,max:62,title:'Artillery support granted!',text:'Resolve FRIENDLY RE31–33 even if it has already occurred.'},
+      {min:63,max:63,title:'Fanatics!',text:'A FRIENDLY leader Battle Hardens and eligible Infantry in its Location may also Battle Harden.'},
+      {min:64,max:64,title:'MG Platoon!',text:'Four 1-2-7 crews arrive with two HMG and two MMG (Russian HMG may become .50 cal).'},
+      {min:65,max:65,title:'Heavy Armor!',text:'StuG IIIGs (German) or KV-1 M42s (Russian) arrive; determine number and Armor Leader.'},
+      {min:66,max:66,title:'Hero!',text:'Immediately create a Hero from the closest eligible FRIENDLY MMC.'},
+      {min:71,max:72,title:'Heat of Battle!',text:'Conduct the listed prior FRIENDLY RE selected by Random dr.'},
+      {min:73,max:74,title:'Command Confusion!',text:'For the remainder of the game, qualifying ENEMY action doubles cause Panic.'},
+      {min:75,max:76,title:'ENEMY attack called off!',text:'All ENEMY attitudes become Hold; A1 receives +1 and previous negative A1 DRM are cancelled; decrease ENEMY RE# by one.'}
+    ],
+    rules:[
+      ['20.2','Chapter V rules V.1–V11 apply to all VotG SASL Missions; identified parts of V12 and RG Daily Max/recon activation also apply.'],
+      ['3.321','Advance S? move toward the closest FRIENDLY-controlled VPO or FRIENDLY board-edge hex unless an MSR says otherwise.'],
+      ['4.12','The entire VotG map is a built-up mapboard.'],
+      ['4.21–4.22','Randomize S? entry: letter chits for north/south edges and numbered 1–50 chits for east/west edges.'],
+      ['5.1','Use the AC drm printed in the selected VotG Mission or CG; Chapter S Divider AC drm are NA.'],
+      ['5.712','An Advance-attitude vehicle activated in Bog Terrain uses bypass if possible to avoid a Bog DR.'],
+      ['5.73','Russian Leader generation with NKVD and/or 4-2-6/2-2-6 MMC uses VotG R3a.'],
+      ['5.742–5.7421','Entrenchment in a building Fortifies that Location and levels below; qualifying NKVD activations create a NKVD Strongpoint.'],
+      ['5.753','Mortars ≤60mm activated in a non-Roofless building/pillbox become MMG; ≥70mm become HMG, subject to the NKVD exception.'],
+      ['5.761','In a Factory or Roofless building randomly choose Inside [1–3] or Outside [4–6] Gun table; reroll prohibited mortars.'],
+      ['6.3061','A Good Order ENEMY DC unit automatically receives Move and attempts placement against its priority target; special breach/thrown-DC procedures apply.'],
+      ['6.312','IP units in Hold roll normally except fortified-building IP units automatically Fire when a target exists; Advance IP units roll normally.'],
+      ['6.4','ENEMY AFV Riders attempt to disembark after a stop MP, or next MPh if necessary.'],
+      ['8.14','ENEMY MG/IFE uses Sustained Fire after a NTC using Final IFT DRM and +1 if Original B# <12; Berserk/FPF use it automatically.'],
+      ['8.51/8.53','Form a multi-Location FG when current FP cannot reach at least a NMC.'],
+      ['8.6101','Eligible ENEMY MG places a road/railroad/boulevard/open-ground Fire Lane after the prescribed NTC.'],
+      ['8.72/8.75','Use the VotG OBA chart; limit different FFE strengths and apply cumulative continuation drm, with original 6 cancelling.'],
+      ['11.4','Hold units in a fortified building or pillbox add +4 to Advance-into-CC/Melee NTC.'],
+      ['16.0','Offboard Observers and Observation Planes are exempt from Command Control.'],
+      ['17.1','The four VotG SASL Missions may be used as additional SASL Campaign Missions, with the §20.3 campaign adjustments.'],
+      ['20.4','For VotG Campaign Games use Chapter V V12 CG rules and the additional S? placement, attack, artillery, air support, VPO, refit and initiative procedures in §20.41–20.42.']
+    ]
+  },
   'red-factories': {
     name: 'Red Barricades',
     subtitle: 'Stalingrad — October / November 1942',
@@ -12485,7 +12623,7 @@ function _getCampaignSquadDRM(natKey) {
   return cd.squadDRM ? cd.squadDRM(natKey) : 0;
 }
 
-function setActiveCampaign(key) {
+function setActiveCampaign(key, restoring) {
   window._activeCampaign = key || null;
   const badge = document.getElementById('campaign-badge');
   const info  = document.getElementById('hsasl-campaign-info');
@@ -12495,12 +12633,21 @@ function setActiveCampaign(key) {
   if (!key) {
     if (badge) badge.style.display = 'none';
     if (info)  info.style.display  = 'none';
+    buildA1Table();
+    buildA11Table();
+    buildG9Table();
+    buildR9Table();
+    if (!restoring) saveState();
     return;
   }
   const cd = CAMPAIGN_DATA[key];
   if (!cd) return;
 
   if (badge) { badge.textContent = '⚑ HSASL: ' + cd.name; badge.style.display = 'inline-flex'; }
+  buildA1Table();
+  buildA11Table();
+  buildG9Table();
+  buildR9Table();
 
   if (info) {
     const affectsHtml = (cd.affects||[]).map(n=>
@@ -12509,8 +12656,8 @@ function setActiveCampaign(key) {
 
     // RB Random Event Table section
     let rbREHtml = '';
-    if (cd.rbRE) {
-      const tableRows = cd.rbRE.map(e => {
+    if (cd.rbRE || cd.reEvents) {
+      const tableRows = (cd.reEvents || cd.rbRE).map(e => {
         const rng = e.min === e.max ? String(e.min) : `${e.min}–${e.max}`;
         return `<tr>
           <td style="white-space:nowrap;font-weight:bold;color:var(--text-bright);padding:3px 8px;vertical-align:top;font-size:12px">${rng}</td>
@@ -12522,9 +12669,9 @@ function setActiveCampaign(key) {
       }).join('');
       rbREHtml = `
         <div style="margin-top:22px">
-          <div style="font-size:13px;font-weight:bold;letter-spacing:.5px;color:var(--text-bright);margin-bottom:6px">RB SASL RANDOM EVENT TABLE <span style="font-size:10px;color:var(--text-dim);font-weight:normal">(d66 — use when standard RE conflicts with RB rules §19.4)</span></div>
+          <div style="font-size:13px;font-weight:bold;letter-spacing:.5px;color:var(--text-bright);margin-bottom:6px">${cd.reLabel || 'RB SASL RANDOM EVENT TABLE'} <span style="font-size:10px;color:var(--text-dim);font-weight:normal">(d66)</span></div>
           <div style="margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <button class="btn" onclick="rollRbRE()" style="font-size:12px;padding:5px 16px">Roll d66 RB Event</button>
+            <button class="btn" onclick="rollRbRE()" style="font-size:12px;padding:5px 16px">Roll d66 ${cd.name} Event</button>
             <div id="rb-re-result" style="display:none;background:var(--card-bg);border:1px solid var(--border);border-radius:4px;padding:6px 12px;font-size:12px"></div>
           </div>
           <div style="overflow-x:auto">
@@ -12570,7 +12717,15 @@ function setActiveCampaign(key) {
     }
 
     // Key rule modifications
-    const rulesHtml = `
+    const votgRulesHtml = cd.rules ? `
+      <div style="margin-top:22px">
+        <div style="font-size:13px;font-weight:bold;letter-spacing:.5px;color:var(--text-bright);margin-bottom:8px">VotG SUPPLEMENTAL RULES</div>
+        ${cd.rules.map(([id,text])=>`<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:4px;padding:7px 12px;margin-bottom:5px;font-size:11px;line-height:1.55"><b style="color:#88bbff">${id}</b> — ${text}</div>`).join('')}
+      </div>
+      <div style="margin-top:22px"><div style="font-size:13px;font-weight:bold;color:var(--text-bright);margin-bottom:6px">VotG OBA AVAILABILITY (2d6)</div><div style="overflow-x:auto"><table><thead><tr><th>DR</th><th>German</th><th>Russian</th></tr></thead><tbody>${Object.entries(cd.oba).map(([dr,v])=>`<tr><td>${dr}</td><td>${v.german}</td><td>${v.russian}</td></tr>`).join('')}</tbody></table></div><div class="note">M = Battalion Mortar; R = Rocket OBA; * may fire IR. All non-Rocket modules have Smoke unless SSR denies it.</div></div>
+      <div style="margin-top:22px"><div style="font-size:13px;font-weight:bold;color:var(--text-bright);margin-bottom:6px">VotG R10 HUMAN WAVE UNITS/SW</div><div style="overflow-x:auto"><table><thead><tr><th>Final dr</th><th>Units</th></tr></thead><tbody>${Object.entries(cd.r10.units).map(([dr,v])=>`<tr><td>${dr}</td><td>${v}</td></tr>`).join('')}</tbody></table></div><div class="note">R10a DRM: +1 on 14 Sep 1942; −1 from 15 Sep through Nov 1942; +1 per Russian leader/commissar already in the wave; −1 if none is present. SW results use VotG R10b.</div></div>` : '';
+
+    const rulesHtml = cd.rules ? votgRulesHtml : `
       <div style="margin-top:22px">
         <div style="font-size:13px;font-weight:bold;letter-spacing:.5px;color:var(--text-bright);margin-bottom:8px">KEY RULE MODIFICATIONS (§19.3)</div>
         <div style="display:flex;flex-direction:column;gap:5px">
@@ -12598,15 +12753,17 @@ function setActiveCampaign(key) {
       ${rulesHtml}`;
     info.style.display = 'block';
   }
+  if (!restoring) saveState();
 }
 
 function rollRbRE() {
   if (!window._activeCampaign) return;
   const cd = CAMPAIGN_DATA[window._activeCampaign];
-  if (!cd || !cd.rbRE) return;
+  const events = cd?.reEvents || cd?.rbRE;
+  if (!cd || !events) return;
   const d1 = d6(), d2 = d6();
   const val = d1 * 10 + d2;
-  const entry = cd.rbRE.find(e => val >= e.min && val <= e.max);
+  const entry = events.find(e => val >= e.min && val <= e.max);
   const el = document.getElementById('rb-re-result');
   if (!el) return;
   if (entry) {
@@ -12615,7 +12772,7 @@ function rollRbRE() {
     el.innerHTML = `<b>${d1}${d2} (${val})</b> — No matching entry`;
   }
   el.style.display = '';
-  addToHistory({ dice: `d66:${d1}${d2}`, label: `RB RE → ${entry ? entry.title : val}`, panic: false });
+  addToHistory({ dice: `d66:${d1}${d2}`, label: `${cd.name} RE → ${entry ? entry.title : val}`, panic: false });
 }
 
 function _renderCampaignTableSummary(key) {
@@ -12641,7 +12798,7 @@ function _renderCampaignTableSummary(key) {
   if (cd.a1)   globalList.push('A1 Enemy Activation');
   if (cd.a5)   globalList.push('A5 Fortification');
   if (cd.age)  globalList.push('S? Placement by Level');
-  if (cd.rbRE) globalList.push('RB SASL Random Event');
+  if (cd.rbRE || cd.reEvents) globalList.push(cd.reLabel || 'RB SASL Random Event');
   const globalCard = globalList.length ? `<div style="background:var(--card-bg);border:1px solid var(--border);border-left:3px solid #aaffaa;border-radius:4px;padding:8px 12px;min-width:160px">
     <div style="font-size:12px;font-weight:bold;color:#aaffaa;margin-bottom:4px">All Nationalities</div>
     ${globalList.map(t=>`<div style="font-size:11px;color:var(--text-dim)">• ${t}</div>`).join('')}
@@ -13832,7 +13989,7 @@ function rollGen56(a1Entry) {
       return _genRowHTML(rowItem, drStr+(sqDRM?`+DRM${sqDRM>0?'+':''}${sqDRM}=DR${adjDr}`:''), `{${pfx}2}`, _displayUnitTypeResult(res), (note.trim()+classNote).trim(), fnotes.length?fnotes:null);
     }
     if (item==='L') {
-      const tbl=GEN_LEADER[natKey];
+      const tbl=_getCampaignTables(natKey)?.leader || GEN_LEADER[natKey];
       const lCard = _findNatCard(natKey, pfx+'3:');
       const {totalDRM: lDRM, notes: lDRMnotes} = _getAutoableDRM(lCard);
 
@@ -14177,7 +14334,8 @@ function rollG9() {
   const white   = d6();
   const coloredFinal = Math.max(0, colored + drm);
   const resultNum = coloredFinal * 10 + white;
-  const entry = G9_MAP[resultNum];
+  const votgFriendlyRE = window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.friendlyREEvents;
+  const entry = votgFriendlyRE ? votgFriendlyRE.find(e=>resultNum>=e.min&&resultNum<=e.max) : G9_MAP[resultNum];
   if (window._wcNatKey !== undefined) window._wcLastREEntry = entry;
 
   const drmStr = drm !== 0 ? ` ${drm >= 0 ? '+' : ''}${drm} DRM = <b>${coloredFinal}</b>` : ` = ${coloredFinal}`;
@@ -14192,7 +14350,7 @@ function rollG9() {
   if (entry) {
     html += `<div style="background:var(--panel);border:1px solid ${entry.once ? '#ABCAE9' : 'var(--border)'};border-radius:4px;padding:8px;">
       <div style="font-size:13px;font-weight:bold;color:${entry.once ? '#ABCAE9' : 'var(--text-bright)'};margin-bottom:4px">
-        ${entry.key}: ${entry.title}${entry.once ? ' <span style="font-size:11px;opacity:.8">(once per Mission)</span>' : ''}
+        ${entry.key || (entry.min===entry.max?entry.min:`${entry.min}–${entry.max}`)}: ${entry.title}${entry.once ? ' <span style="font-size:11px;opacity:.8">(once per Mission)</span>' : ''}
       </div>
       <div style="font-size:12px;color:var(--text);line-height:1.6">${entry.text}</div>
     </div>`;
@@ -14208,9 +14366,10 @@ function rollG9() {
 function buildG9Table() {
   const el = document.getElementById('g9-table-container');
   if (!el) return;
-  const rows = G9_DATA.map(e => `
+  const source = (window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.friendlyREEvents) || G9_DATA;
+  const rows = source.map(e => `
     <tr style="${e.once ? 'background:rgba(171,202,233,.15)' : ''}">
-      <td style="white-space:nowrap;font-weight:bold;color:${e.once ? '#ABCAE9' : 'var(--text-bright)'};padding:4px 8px;vertical-align:top">${e.key}</td>
+      <td style="white-space:nowrap;font-weight:bold;color:${e.once ? '#ABCAE9' : 'var(--text-bright)'};padding:4px 8px;vertical-align:top">${e.key || (e.min===e.max?e.min:`${e.min}–${e.max}`)}</td>
       <td style="padding:4px 8px;vertical-align:top">
         <div style="font-size:12px;font-weight:bold;color:${e.once ? '#ABCAE9' : 'var(--text-bright)'};margin-bottom:3px">${e.title}</div>
         <div style="font-size:11px;line-height:1.5;color:var(--text)">${e.text}</div>
@@ -14295,7 +14454,8 @@ function rollR9() {
   const white   = d6();
   const coloredFinal = Math.max(0, colored + drm);
   const resultNum = coloredFinal * 10 + white;
-  const entry = R9_MAP[resultNum];
+  const votgFriendlyRE = window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.friendlyREEvents;
+  const entry = votgFriendlyRE ? votgFriendlyRE.find(e=>resultNum>=e.min&&resultNum<=e.max) : R9_MAP[resultNum];
   if (window._wcNatKey !== undefined) window._wcLastREEntry = entry;
 
   const drmStr = drm !== 0 ? ` ${drm >= 0 ? '+' : ''}${drm} DRM = <b>${coloredFinal}</b>` : ` = ${coloredFinal}`;
@@ -14310,7 +14470,7 @@ function rollR9() {
   if (entry) {
     html += `<div style="background:var(--panel);border:1px solid ${entry.once ? '#EAAA00' : 'var(--border)'};border-radius:4px;padding:8px;">
       <div style="font-size:13px;font-weight:bold;color:${entry.once ? '#EAAA00' : 'var(--text-bright)'};margin-bottom:4px">
-        ${entry.key}: ${entry.title}${entry.once ? ' <span style="font-size:11px;opacity:.8">(once per Mission)</span>' : ''}
+        ${entry.key || (entry.min===entry.max?entry.min:`${entry.min}–${entry.max}`)}: ${entry.title}${entry.once ? ' <span style="font-size:11px;opacity:.8">(once per Mission)</span>' : ''}
       </div>
       <div style="font-size:12px;color:var(--text);line-height:1.6">${entry.text}</div>
     </div>`;
@@ -14326,9 +14486,10 @@ function rollR9() {
 function buildR9Table() {
   const el = document.getElementById('r9-table-container');
   if (!el) return;
-  const rows = R9_DATA.map(e => `
+  const source = (window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.friendlyREEvents) || R9_DATA;
+  const rows = source.map(e => `
     <tr style="${e.once ? 'background:rgba(234,170,0,.15)' : ''}">
-      <td style="white-space:nowrap;font-weight:bold;color:${e.once ? '#EAAA00' : 'var(--text-bright)'};padding:4px 8px;vertical-align:top">${e.key}</td>
+      <td style="white-space:nowrap;font-weight:bold;color:${e.once ? '#EAAA00' : 'var(--text-bright)'};padding:4px 8px;vertical-align:top">${e.key || (e.min===e.max?e.min:`${e.min}–${e.max}`)}</td>
       <td style="padding:4px 8px;vertical-align:top">
         <div style="font-size:12px;font-weight:bold;color:${e.once ? '#EAAA00' : 'var(--text-bright)'};margin-bottom:3px">${e.title}</div>
         <div style="font-size:11px;line-height:1.5;color:var(--text)">${e.text}</div>
@@ -15688,7 +15849,10 @@ function rollA11() {
   const white   = d6();
   const coloredFinal = Math.max(0, colored + drm);
   const resultNum = coloredFinal * 10 + white;
-  const entry = A11_MAP[resultNum];
+  const campaignRE = window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.reEvents;
+  const entry = campaignRE
+    ? campaignRE.find(e => resultNum >= e.min && resultNum <= e.max)
+    : A11_MAP[resultNum];
   if (window._wcNatKey !== undefined) window._wcLastREEntry = entry;
 
   const drmStr = drm !== 0 ? ` ${drm >= 0 ? '+' : ''}${drm} DRM = <b>${coloredFinal}</b>` : ` = ${coloredFinal}`;
@@ -15704,7 +15868,7 @@ function rollA11() {
   if (entry) {
     html += `<div style="background:var(--panel);border:1px solid ${entry.once ? 'var(--accent)' : 'var(--border)'};border-radius:4px;padding:8px;">
       <div style="font-size:13px;font-weight:bold;color:${entry.once ? 'var(--accent)' : 'var(--text-bright)'};margin-bottom:4px">
-        ${entry.key}: ${entry.title}${entry.once ? ' <span style="font-size:11px;opacity:.8">(once per Mission)</span>' : ''}
+        ${entry.key || (entry.min === entry.max ? entry.min : `${entry.min}–${entry.max}`)}: ${entry.title}${entry.once ? ' <span style="font-size:11px;opacity:.8">(once per Mission)</span>' : ''}
       </div>
       <div style="font-size:12px;color:var(--text);line-height:1.6">${entry.text}</div>
     </div>`;
@@ -15720,9 +15884,11 @@ function rollA11() {
 function buildA11Table() {
   const el = document.getElementById('a11-table-container');
   if (!el) return;
-  const rows = A11_DATA.map(e => `
+  const campaignEvents = window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.reEvents;
+  const source = campaignEvents || A11_DATA;
+  const rows = source.map(e => `
     <tr style="${e.once ? 'background:rgba(139,115,85,.1)' : ''}">
-      <td style="white-space:nowrap;font-weight:bold;color:${e.once ? 'var(--accent)' : 'var(--text-bright)'};padding:4px 8px;vertical-align:top">${e.key}</td>
+      <td style="white-space:nowrap;font-weight:bold;color:${e.once ? 'var(--accent)' : 'var(--text-bright)'};padding:4px 8px;vertical-align:top">${e.key || (e.min === e.max ? e.min : `${e.min}–${e.max}`)}</td>
       <td style="padding:4px 8px;vertical-align:top">
         <div style="font-size:12px;font-weight:bold;color:${e.once ? 'var(--accent)' : 'var(--text-bright)'};margin-bottom:3px">${e.title}</div>
         <div style="font-size:11px;line-height:1.5;color:var(--text)">${e.text}</div>
@@ -15735,7 +15901,7 @@ function buildA11Table() {
     </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>
-  <div style="font-size:11px;color:var(--text-dim);margin-top:6px"><b style="color:var(--accent)">*</b> = once per Mission; reroll if repeated (2.31). Results outside 01–76 = No Event. Colored die 7 requires DRM ≥+1 on colored die 6.</div>`;
+  <div style="font-size:11px;color:var(--text-dim);margin-top:6px">${campaignEvents ? `${CAMPAIGN_DATA[window._activeCampaign].name} superseding A11 table is active.` : '<b style="color:var(--accent)">*</b> = once per Mission; reroll if repeated (2.31). Results outside 01–76 = No Event. Colored die 7 requires DRM ≥+1 on colored die 6.'}</div>`;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -15763,7 +15929,8 @@ function buildCommandTables() {
 function buildA1Table() {
   const tbody = document.getElementById('a1-tbody');
   if (!tbody) return;
-  tbody.innerHTML = A1_DATA.map(row => `
+  const source = (window._activeCampaign && CAMPAIGN_DATA[window._activeCampaign]?.a1) || A1_DATA;
+  tbody.innerHTML = source.map(row => `
     <tr class="a1-row" data-dr="${row.dr}">
       <td class="dr-num">${row.drLabel || row.dr}</td>
       <td class="result-units">${row.result}</td>
