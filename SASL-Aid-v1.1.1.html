@@ -324,7 +324,7 @@ label { font-size: 12px; color: var(--text-dim); }
 
 <!-- ══════════════════ HEADER ══════════════════ -->
 <div id="header">
-  <div id="header-title">▪ SASL AID ▪ <span id="app-version" style="font-size:12px;font-weight:normal;letter-spacing:0;color:var(--text-dim);white-space:nowrap">v1.1.0</span></div>
+  <div id="header-title">▪ SASL AID ▪ <span id="app-version" style="font-size:12px;font-weight:normal;letter-spacing:0;color:var(--text-dim);white-space:nowrap">v1.1.1</span></div>
   <div id="game-state">
     <div class="gs-group">
       <span class="gs-label" style="cursor:pointer;border-bottom:1px dotted var(--text-dim)" onclick="goToFriendlyTab()" title="Open Friendly Generation Tables">Friendly ↗</span>
@@ -8627,6 +8627,41 @@ function organizeMissionSetup() {
     if (!el.id && !el.children.length && !el.textContent.trim()) el.remove();
   });
   syncMissionAttitude('r-prev-attitude');
+  orderMissionPanels();
+}
+
+function orderMissionPanels() {
+  const reorder = (panelId, selectors) => {
+    const panel = document.getElementById(panelId);
+    const cards = Array.from(panel.querySelectorAll('.card')).filter(card => !card.parentElement.closest('.card'));
+    const ordered = [];
+    selectors.forEach(selector => {
+      const card = cards.find(card => selector.startsWith('#')
+        ? card.id === selector.slice(1)
+        : card.querySelector('.card-title')?.textContent.trim().startsWith(selector));
+      if (card && !ordered.includes(card)) ordered.push(card);
+    });
+    cards.forEach(card => { if (!ordered.includes(card)) ordered.push(card); });
+    const container = document.createElement('div');
+    container.className = 'mission-panel-sequence';
+    ordered.forEach(card => container.appendChild(card));
+    panel.replaceChildren(container);
+  };
+  reorder('tab-setup', [
+    'Choose Opposing Sides', 'A7: Mission Selection', 'Possible Partisan ENEMY',
+    'EC, Wind, Weather', 'A10a:', 'A10b:', 'LC Tables', 'Mission Setup Notes',
+    '4.1 — S? Placement Cases', '4.12 — Built-Up Mapboards', '4.13 / 4.14',
+    'Attitudes Quick Reference', 'Table A6', 'Case (b)', 'Case (e)',
+    'Table A9e', 'S? Counter Setup', '#setup-sheet', '1d6'
+  ]);
+  reorder('tab-roster', [
+    'Company Selection', '#ob-card', 'Directly Attached Units',
+    'Campaign Game Company Refit Steps', 'CG Victory Points',
+    'Unit Status: Retained', 'Squad Seasoning & Company Quality',
+    'Squad Seasoning Table', 'Company Leader Type', 'Squad Replacement Table',
+    'MMC-Type Replacement Table', 'Replacement Phase Rollers',
+    'Between-Mission Checklist', 'Share Campaign State'
+  ]);
 }
 
 function syncMissionAttitude(sourceId) {
