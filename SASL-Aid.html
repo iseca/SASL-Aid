@@ -972,6 +972,11 @@ label { font-size: 12px; color: var(--text-dim); }
     </div>
   </div>
 
+  <div class="card">
+    <div class="card-title">A6: Count Tables — Roll 1d6</div>
+    <div style="overflow-x:auto"><table id="a6-reference-table"></table></div>
+  </div>
+
   <!-- ── Terrain Selection & Mapboard Selection (A8, A9) ── -->
   <div style="margin-top:10px">
     <div class="card-title" style="font-size:13px; padding:8px 0; color:#adadd0; border-bottom:2px solid var(--border); margin-bottom:10px">
@@ -6287,6 +6292,23 @@ label { font-size: 12px; color: var(--text-dim); }
       </div>
 
       <!-- A9e Roller -->
+      <div class="card">
+        <div class="card-title">Table A6 — Count Roller (1d6)</div>
+        <div class="inline-group">
+          <label for="setup-a6-table">Table</label>
+          <select id="setup-a6-table">
+            <option value="a">A6a</option><option value="b">A6b</option>
+            <option value="c">A6c</option><option value="d">A6d</option>
+            <option value="e">A6e</option><option value="f">A6f</option>
+            <option value="g">A6g</option><option value="h">A6h</option>
+          </select>
+          <label for="setup-a6-drm">drm</label>
+          <input id="setup-a6-drm" type="number" value="0" style="width:60px">
+          <button class="btn btn-primary" onclick="rollSetupA6()">Roll 1d6</button>
+        </div>
+        <div id="setup-a6-result" aria-live="polite"></div>
+      </div>
+
       <div class="card" style="margin-top:4px">
         <div class="card-title">Table A9<span style="text-transform:none">e</span> — Built-Up Map S? Placement (4.12)</div>
         <div style="font-size:11px;color:var(--text-dim);margin-bottom:10px;line-height:1.6">
@@ -10043,6 +10065,22 @@ function _rollA6(letter, drm) {
   const drStr = drm ? `dr=${rawDr}+DRM${drm>0?'+':''}${drm}=${adjDr}` : `dr=${rawDr}`;
   return {label:'A6'+letter, dr:rawDr, adjDr, drStr, result};
 }
+
+function buildA6ReferenceTable() {
+  const table = document.getElementById('a6-reference-table');
+  if (!table) return;
+  const letters = Object.keys(A6_TABLES);
+  table.innerHTML = '<thead><tr><th>dr</th>' + letters.map(letter => `<th>A6${letter}</th>`).join('') + '</tr></thead><tbody>' +
+    Array.from({length:6}, (_, i) => `<tr><td>${i + 1}</td>${letters.map(letter => `<td>${_genLu(A6_TABLES[letter], i + 1)}</td>`).join('')}</tr>`).join('') + '</tbody>';
+}
+
+function rollSetupA6() {
+  const roll = _rollA6(gs('setup-a6-table'), parseInt(gs('setup-a6-drm'), 10) || 0);
+  document.getElementById('setup-a6-result').innerHTML = _genRowHTML('Count', roll.drStr, roll.label, String(roll.result), '');
+  addToHistory({dice:roll.drStr, label:`${roll.label} count: ${roll.result}`, panic:false});
+}
+
+window.addEventListener('DOMContentLoaded', buildA6ReferenceTable);
 
 /* ── H1.531 Air Support Table — bomb availability by nationality & year ── */
 const AIR_SUPPORT_TABLE = {
